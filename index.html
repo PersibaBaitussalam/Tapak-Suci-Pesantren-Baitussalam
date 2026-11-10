@@ -6,7 +6,6 @@
 <title>Database Tapak Suci - Pesantren Baitussalam Simalungun</title>
 <link rel="icon" href="logo.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--g1:#064e32;--g2:#1b8a4b;--gold:#d4af37;--gold2:#f3dc85;--ink:#16301f;--bg:#f4f7f1;--line:#dfe6d6}
 *{box-sizing:border-box}
@@ -87,27 +86,15 @@ const LV={
  pendekar:['Pendekar Muda / Hitam Melati 1 (P.Ma)','Pendekar Madya / Hitam Melati 2 (P.Mdy)','Pendekar Kepala / Hitam Melati 3 (P.Ka)','Pendekar Utama / Hitam Melati 4 (P.Ua)','Pendekar Besar / Hitam Melati 5 (P.Br)']
 };
 const NAMA={siswa:'Siswa',kader:'Kader',pendekar:'Pendekar'};
-let db={siswa:[],kader:[],pendekar:[]},admin=false,page='dashboard',cur=null;
+let db={siswa:[],kader:[],pendekar:[],pass:'admin123'},admin=false,page='dashboard',cur=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-/* ---------- Supabase ---------- */
-const SUPABASE_URL='GANTI_DENGAN_PROJECT_URL';      // contoh: https://abcd1234.supabase.co
-const SUPABASE_KEY='GANTI_DENGAN_ANON_PUBLIC_KEY';  // kunci "anon public" (aman dipublikasikan)
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const fromRow=d=>({id:d.id,nama:d.nama,jk:d.jk||'Laki-laki',tahun:d.tahun??'',tingkat:d.tingkat,kta:d.kta||'',alamat:d.alamat||'',kontak:d.kontak||'',foto:d.foto||'',ktaImg:d.kta_img||'',keg:d.keg||[]});
-const toRow=(t,r)=>({jenjang:t,nama:r.nama,jk:r.jk,tahun:parseInt(r.tahun)||null,tingkat:r.tingkat,kta:r.kta,alamat:r.alamat,kontak:r.kontak,foto:r.foto||null,kta_img:r.ktaImg||null,keg:r.keg||[]});
-async function load(){
- const {data,error}=await sb.from('anggota').select('*').order('nama');
- if(error)return alert('Gagal memuat data: '+error.message);
- db={siswa:[],kader:[],pendekar:[]};data.forEach(d=>db[d.jenjang]&&db[d.jenjang].push(fromRow(d)));
-}
-async function up(s){ // unggah gambar baru ke Storage, kembalikan URL publik
- if(!s||!s.startsWith('data:'))return s;
- const b=await (await fetch(s)).blob(),p=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
- const {error}=await sb.storage.from('media').upload(p,b,{contentType:'image/jpeg'});if(error)throw error;
- return sb.storage.from('media').getPublicUrl(p).data.publicUrl;
-}
+/* ---------- Penyimpanan (IndexedDB di browser) ---------- */
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const idb=()=>new Promise(r=>{const q=indexedDB.open('tsdb',1);q.onupgradeneeded=()=>q.result.createObjectStore('k');q.onsuccess=()=>r(q.result)});
+async function load(){const d=await idb();return new Promise(r=>{const g=d.transaction('k').objectStore('k').get('db');g.onsuccess=()=>{if(g.result)db=Object.assign(db,g.result);r()}})}
+async function save(){const d=await idb();d.transaction('k','readwrite').objectStore('k').put(db,'db')}
 function img(file,max){return new Promise(r=>{const f=new FileReader();f.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.8))};i.src=f.result};f.readAsDataURL(file)})}
 
 /* ---------- Navigasi ---------- */
@@ -117,17 +104,10 @@ function nav(){
  $('loginBtn').textContent=admin?'Keluar admin':'Masuk sebagai admin';
 }
 function go(p){page=p;side.classList.remove('open');nav();render()}
-$('loginBtn').onclick=async()=>{
- if(admin){await sb.auth.signOut();return}
- $('dlg').innerHTML=`<div class="dh">Masuk admin</div><div class="db"><div class="f"><label class="w">Email<input id="le" type="email" autocomplete="username"></label><label class="w">Kata sandi<input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></label></div></div><div class="df"><button class="btn red" onclick="dlg.close()">Batal</button><button class="btn" onclick="doLogin()">Masuk</button></div>`;
- $('dlg').showModal();
+$('loginBtn').onclick=()=>{
+ if(admin){admin=false}else{const p=prompt('Kata sandi admin:');if(p===null)return;if(p===db.pass)admin=true;else return alert('Kata sandi salah.')}
+ nav();render();
 };
-async function doLogin(){
- const {error}=await sb.auth.signInWithPassword({email:$('le').value.trim(),password:$('lp').value});
- if(error)return alert('Gagal masuk: '+error.message);
- dlg.close();
-}
-sb.auth.onAuthStateChange((_e,ses)=>{admin=!!ses;nav();render()});
 function render(){
  const a=$('actions');a.innerHTML='';
  if(page==='dashboard')return dash();
@@ -199,20 +179,12 @@ async function addKeg(el){for(const f of el.files)cur.keg.push(await img(f,800))
 function gk(){$('gk').innerHTML=cur.keg.map((s,i)=>`<div><img src="${s}" alt=""><button type="button" onclick="cur.keg.splice(${i},1);gk()" title="Hapus">×</button></div>`).join('')}
 async function saveF(){
  const nama=$('fn').value.trim();if(!nama)return alert('Nama wajib diisi.');
- const btn=document.querySelector('#dlg .df .btn:last-child');btn.disabled=true;btn.textContent='Menyimpan...';
- try{
-  const r={nama,jk:$('fj').value,tahun:$('ft').value,tingkat:$('fl2').value,kta:$('fk').value.trim(),alamat:$('fa').value.trim(),kontak:$('fc').value.trim(),foto:await up(cur.foto),ktaImg:await up(cur.ktaImg),keg:await Promise.all(cur.keg.map(up))};
-  const {error}=await (cur.id?sb.from('anggota').update(toRow(cur.t,r)).eq('id',cur.id):sb.from('anggota').insert(toRow(cur.t,r)));
-  if(error)throw error;
-  await load();dlg.close();render();
- }catch(e){alert('Gagal menyimpan: '+(e.message||e));btn.disabled=false;btn.textContent='Simpan'}
+ const r={id:cur.id||uid(),nama,jk:$('fj').value,tahun:$('ft').value,tingkat:$('fl2').value,kta:$('fk').value.trim(),alamat:$('fa').value.trim(),kontak:$('fc').value.trim(),foto:cur.foto,ktaImg:cur.ktaImg,keg:cur.keg};
+ const a=db[cur.t];if(cur.id)a[a.findIndex(x=>x.id===cur.id)]=r;else a.push(r);
+ await save();dlg.close();render();
 }
-async function del(t,id){
- if(!confirm('Hapus data ini?'))return;
- const {error}=await sb.from('anggota').delete().eq('id',id);
- if(error)return alert('Gagal menghapus: '+error.message);
- await load();render();
-}
+async function del(t,id){if(!confirm('Hapus data ini?'))return;db[t]=db[t].filter(x=>x.id!==id);await save();render()}
+
 /* ---------- Excel ---------- */
 const HEAD=['Nama','Jenis Kelamin','Tahun Masuk','Tingkatan Terakhir','Kode/No KTA','Alamat','No Kontak'];
 function tpl(t){
@@ -231,35 +203,33 @@ function imp(el){
  const t=el.dataset.t,f=el.files[0];if(!f)return;
  const rd=new FileReader();
  rd.onload=async()=>{
-  const wb=XLSX.read(rd.result,{type:'array'}),rs=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''}),arr=[];
+  const wb=XLSX.read(rd.result,{type:'array'}),rs=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+  let n=0;
   for(const r of rs){
    const nama=String(r['Nama']||'').trim();if(!nama)continue;
    const v=String(r['Tingkatan Terakhir']||'').trim().toLowerCase();
    const tk=LV[t].find(l=>l.toLowerCase()===v)||(v&&LV[t].find(l=>l.toLowerCase().includes(v)))||LV[t][0];
-   arr.push(toRow(t,{nama,jk:/^p/i.test(r['Jenis Kelamin'])?'Perempuan':'Laki-laki',tahun:r['Tahun Masuk'],tingkat:tk,kta:String(r['Kode/No KTA']||''),alamat:String(r['Alamat']||''),kontak:String(r['No Kontak']||'')}));
+   db[t].push({id:uid()+n,nama,jk:/^p/i.test(r['Jenis Kelamin'])?'Perempuan':'Laki-laki',tahun:String(r['Tahun Masuk']||''),tingkat:tk,kta:String(r['Kode/No KTA']||''),alamat:String(r['Alamat']||''),kontak:String(r['No Kontak']||''),foto:'',ktaImg:'',keg:[]});n++;
   }
-  el.value='';
-  if(!arr.length)return alert('Tidak ada baris data yang bisa diimpor.');
-  const {error}=await sb.from('anggota').insert(arr);
-  if(error)return alert('Gagal impor: '+error.message);
-  alert(arr.length+' data berhasil diimpor.');await load();render();
+  await save();el.value='';alert(n+' data berhasil diimpor.');render();
  };
  rd.readAsArrayBuffer(f);
 }
 
-/* ---------- Pengaturan ---------- */
-async function settings(){
+/* ---------- Pengaturan & cadangan ---------- */
+function settings(){
  $('title').textContent='Pengaturan';
  if(!admin){$('view').innerHTML='<div class="card empty">Masuk sebagai admin untuk membuka pengaturan.</div>';return}
- const {data}=await sb.auth.getUser();
- $('view').innerHTML=`<div class="card"><h3 style="margin-top:0">Akun admin</h3><p>Masuk sebagai <b>${esc(data.user?.email)}</b></p><button class="btn" onclick="cp()">Ganti kata sandi</button></div>`;
+ $('view').innerHTML=`<div class="card"><h3 style="margin-top:0">Cadangan data</h3>
+ <p>Data tersimpan di browser perangkat ini. Unduh cadangan secara rutin, lalu pulihkan di perangkat lain bila perlu.</p>
+ <button class="btn gold" onclick="bk()">Unduh cadangan (.json)</button> <button class="btn" onclick="rs.click()">Pulihkan dari cadangan</button><input type="file" id="rs" accept=".json" hidden onchange="restore(this)">
+ <h3>Kata sandi admin</h3><button class="btn" onclick="cp()">Ganti kata sandi</button></div>`;
 }
-async function cp(){
- const p=prompt('Kata sandi baru (min. 6 karakter):');if(!p||p.length<6)return;
- const {error}=await sb.auth.updateUser({password:p});alert(error?'Gagal: '+error.message:'Kata sandi diganti.');
-}
+function bk(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:'application/json'}));a.download='cadangan_tapaksuci_'+new Date().toISOString().slice(0,10)+'.json';a.click()}
+function restore(el){const f=el.files[0];if(!f||!confirm('Data saat ini akan diganti. Lanjutkan?'))return;const r=new FileReader();r.onload=async()=>{try{db=JSON.parse(r.result);await save();alert('Data dipulihkan.');render()}catch{alert('Berkas cadangan tidak valid.')}};r.readAsText(f)}
+async function cp(){const p=prompt('Kata sandi baru (min. 6 karakter):');if(p&&p.length>=6){db.pass=p;await save();alert('Kata sandi diganti.')}}
 
-(async()=>{await load();nav();render()})();
+(async()=>{nav();render();try{await load()}catch(e){console.error(e)}render()})();
 </script>
 </body>
 </html>
