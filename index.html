@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Database Tapak Suci Putera Muhammadiyah- Persatuan Silat Baitussalam PERSIBA- Cabang Pondok Modern Baitussalam Simalungun</title>
+<title>Database Tapak Suci - Pesantren Baitussalam Simalungun</title>
 <link rel="icon" href="logo.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -103,7 +103,7 @@ function nav(){
  $('nav').innerHTML=items.map(([k,t])=>`<button class="${page===k?'on':''}" onclick="go('${k}')">${t}</button>`).join('');
  $('loginBtn').textContent=admin?'Keluar admin':'Masuk sebagai admin';
 }
-function go(p){page=p;side.classList.remove('open');nav();render()}
+function go(p){page=p;side.classList.remove('open');nav();render();if(location.hash!=='#'+p)location.hash=p;window.scrollTo(0,0)}
 $('loginBtn').onclick=()=>{
  if(admin){admin=false}else{const p=prompt('Kata sandi admin:');if(p===null)return;if(p===db.pass)admin=true;else return alert('Kata sandi salah.')}
  nav();render();
@@ -129,18 +129,18 @@ function dash(){
 /* ---------- Daftar anggota ---------- */
 function listView(t){
  $('title').textContent='Data '+NAMA[t];
- if(admin)$('actions').innerHTML=`<button class="btn" onclick="form('${t}')">+ Tambah ${NAMA[t]}</button><button class="btn gold" onclick="tpl('${t}')">Template Excel</button><button class="btn gold" onclick="impIn.dataset.t='${t}';impIn.click()">Impor Excel</button><button class="btn gold" onclick="exp('${t}')">Ekspor</button><input type="file" id="impIn" accept=".xlsx,.xls,.csv" hidden onchange="imp(this)">`;
+ if(admin)$('actions').innerHTML=`<button class="btn" onclick="openForm('${t}')">+ Tambah ${NAMA[t]}</button><button class="btn gold" onclick="tpl('${t}')">Template Excel</button><button class="btn gold" onclick="impIn.dataset.t='${t}';impIn.click()">Impor Excel</button><button class="btn gold" onclick="exp('${t}')">Ekspor</button><input type="file" id="impIn" accept=".xlsx,.xls,.csv" hidden onchange="imp(this)">`;
  else $('actions').innerHTML=`<button class="btn gold" onclick="exp('${t}')">Ekspor Excel</button>`;
- $('view').innerHTML=`<div class="card"><div class="bar"><input id="q" placeholder="Cari nama, alamat, atau kode KTA..." oninput="rows('${t}')"><select id="fl" onchange="rows('${t}')"><option value="">Semua tingkatan</option>${LV[t].map(l=>`<option>${esc(l)}</option>`).join('')}</select></div><div class="tw" id="tbl"></div></div>`;
- rows(t);
+ $('view').innerHTML=`<div class="card"><div class="bar"><input id="q" placeholder="Cari nama, alamat, atau kode KTA..." oninput="tampilRows('${t}')"><select id="fl" onchange="tampilRows('${t}')"><option value="">Semua tingkatan</option>${LV[t].map(l=>`<option>${esc(l)}</option>`).join('')}</select></div><div class="tw" id="tbl"></div></div>`;
+ tampilRows(t);
 }
-function rows(t){
+function tampilRows(t){
  const q=($('q').value||'').toLowerCase(),f=$('fl').value;
  const d=db[t].filter(x=>(!f||x.tingkat===f)&&[x.nama,x.alamat,x.kta].join(' ').toLowerCase().includes(q));
  $('tbl').innerHTML=d.length?`<table><tr><th>No</th><th>Foto</th><th>Nama</th><th>L/P</th><th>Masuk</th><th>Tingkatan terakhir</th><th>KTA</th><th>Aksi</th></tr>${d.map((x,i)=>`<tr>
  <td>${i+1}</td><td>${x.foto?`<img class="av" src="${x.foto}" alt="">`:'<div class="av"></div>'}</td><td><b>${esc(x.nama)}</b></td><td>${x.jk==='Laki-laki'?'L':'P'}</td><td>${esc(x.tahun)}</td><td><span class="tag">${esc(x.tingkat)}</span></td>
  <td>${esc(x.kta||(x.ktaImg?'Ada berkas':'-'))}</td>
- <td style="white-space:nowrap"><button class="btn sm" onclick="detail('${t}','${x.id}')">Detail</button>${admin?` <button class="btn sm gold" onclick="form('${t}','${x.id}')">Ubah</button> <button class="btn sm red" onclick="del('${t}','${x.id}')">Hapus</button>`:''}</td></tr>`).join('')}</table>`:`<div class="empty">Belum ada data ${NAMA[t].toLowerCase()}.${admin?' Klik "Tambah" atau "Impor Excel".':' Admin dapat menambahkan data setelah masuk.'}</div>`;
+ <td style="white-space:nowrap"><button class="btn sm" onclick="detail('${t}','${x.id}')">Detail</button>${admin?` <button class="btn sm gold" onclick="openForm('${t}','${x.id}')">Ubah</button> <button class="btn sm red" onclick="del('${t}','${x.id}')">Hapus</button>`:''}</td></tr>`).join('')}</table>`:`<div class="empty">Belum ada data ${NAMA[t].toLowerCase()}.${admin?' Klik "Tambah" atau "Impor Excel".':' Admin dapat menambahkan data setelah masuk.'}</div>`;
 }
 
 /* ---------- Detail ---------- */
@@ -156,7 +156,7 @@ function detail(t,id){
 }
 
 /* ---------- Form tambah/ubah ---------- */
-function form(t,id){
+function openForm(t,id){
  const x=id?db[t].find(a=>a.id===id):{};
  cur={t,id,foto:x.foto||'',ktaImg:x.ktaImg||'',keg:[...(x.keg||[])]};
  const sis=t==='siswa';
@@ -228,6 +228,13 @@ function settings(){
 function bk(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:'application/json'}));a.download='cadangan_tapaksuci_'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function restore(el){const f=el.files[0];if(!f||!confirm('Data saat ini akan diganti. Lanjutkan?'))return;const r=new FileReader();r.onload=async()=>{try{db=JSON.parse(r.result);await save();alert('Data dipulihkan.');render()}catch{alert('Berkas cadangan tidak valid.')}};r.readAsText(f)}
 async function cp(){const p=prompt('Kata sandi baru (min. 6 karakter):');if(p&&p.length>=6){db.pass=p;await save();alert('Kata sandi diganti.')}}
+
+/* ---------- Tombol kembali & navigasi riwayat ---------- */
+const PAGES=['dashboard','siswa','kader','pendekar','pengaturan'];
+function backBtn(){if(page!=='dashboard')$('actions').insertAdjacentHTML('afterbegin','<button class="btn gold" onclick="go(\'dashboard\')">&larr; Kembali ke Beranda</button>')}
+const _render=render;render=function(){_render();backBtn()};
+window.addEventListener('hashchange',()=>{const p=location.hash.slice(1);if(PAGES.includes(p)&&p!==page){page=p;nav();render()}});
+{const h=location.hash.slice(1);if(PAGES.includes(h))page=h}
 
 (async()=>{nav();render();try{await load()}catch(e){console.error(e)}render()})();
 </script>
