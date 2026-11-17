@@ -90,17 +90,83 @@ dialog::backdrop{background:rgba(4,40,25,.55);backdrop-filter:blur(4px)}
  body::after{width:380px;height:380px;right:-120px;bottom:-120px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Portal akademik: penyegaran antarmuka ===== */
+:root{--g1:#073b2b;--g2:#11734a;--gold:#c8a64b;--gold2:#f2dfa0;--ink:#172b24;--bg:#f3f6f8;--line:#e5ebef;--glass:#fff}
+body{background:#f3f6f8;color:#172b24;display:flex}
+body::before{opacity:.18;background-size:210px}
+body::after{opacity:.035;width:480px;height:480px}
+aside{width:268px;background:linear-gradient(180deg,#092f25 0%,#0b4934 58%,#0d5b3d 100%);border-right:0;box-shadow:8px 0 28px rgba(14,42,32,.12);padding:24px 17px}
+aside::before{background:radial-gradient(circle at 100% 0,rgba(242,223,160,.16),transparent 45%)}
+.brand{padding-bottom:22px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.13)}
+.logo{width:88px;height:88px;margin-bottom:14px;border:3px solid #d7bd6c;box-shadow:0 0 0 5px rgba(255,255,255,.07),0 8px 24px rgba(0,0,0,.22)}
+.brand b{font-family:inherit;font-size:14px;letter-spacing:1.2px;color:#f6e7b4;line-height:1.55}
+.brand small{font-size:9px;letter-spacing:1.6px;color:#c8d9d0;display:block;margin-top:6px}
+.brand-location{font-size:11px;color:#b7cfc2;margin-top:8px}
+.nav-caption{font-size:10px;font-weight:700;letter-spacing:1.6px;color:#9db9aa;padding:8px 14px 6px}
+nav{gap:6px}
+nav button{font-size:13px;padding:13px 14px;border-radius:10px;color:#dcebe3;font-weight:500}
+nav button:hover{background:rgba(255,255,255,.09);transform:translateX(2px)}
+nav button.on{background:linear-gradient(110deg,#d8bd70,#f1dfa4);color:#203629;box-shadow:0 5px 14px rgba(0,0,0,.14);font-weight:700}
+.side-foot{display:grid;gap:13px}
+.side-campus{display:flex;align-items:center;gap:10px;color:#b9d0c4;font-size:10px;line-height:1.55;padding:11px 12px;border:1px solid rgba(255,255,255,.13);border-radius:11px;background:rgba(255,255,255,.045)}
+.side-campus b{color:#f1e4b8;font-size:11px;font-weight:600}
+.side-campus-dot,.online-pill span{width:8px;height:8px;border-radius:50%;background:#55d69a;box-shadow:0 0 0 4px rgba(85,214,154,.13);flex:none}
+main{padding:27px 34px;max-width:1800px;margin:0 auto;width:calc(100% - 268px)}
+header.top{background:transparent;border:0;border-radius:0;box-shadow:none;padding:0 0 20px;margin-bottom:8px;border-bottom:1px solid #e1e8ec;backdrop-filter:none;align-items:center}
+.top-left{display:flex;align-items:center;gap:13px}.top-left h1{font-size:25px;letter-spacing:-.7px;background:none;color:#183b2c}
+.eyebrow{font-size:9px;letter-spacing:1.7px;color:#87978f;font-weight:700;margin-bottom:5px}
+.top-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
+.online-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border:1px solid #e3ebe6;border-radius:30px;color:#547064;font-size:11px;font-weight:600}
+.btn{border-radius:9px;padding:10px 15px;font-size:12px;box-shadow:0 3px 9px rgba(12,83,54,.13)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(12,83,54,.18)}
+.btn.gold{background:#e6d18d;color:#394329;box-shadow:0 3px 9px rgba(166,135,52,.14)}
+.btn.red{background:#b94343}
+.card{background:#fff;border:1px solid #e7edf0;border-radius:15px;padding:21px;box-shadow:0 5px 20px rgba(28,55,44,.045);backdrop-filter:none}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 18px}
+.stat{background:#fff;color:#73847c;border:1px solid #e7edf0;border-radius:14px;padding:19px 20px;box-shadow:0 5px 18px rgba(28,55,44,.045);min-height:120px;display:flex;flex-direction:column;justify-content:space-between;font-size:12px;font-weight:600;transition:transform .18s,border-color .18s}
+.stat:hover{transform:translateY(-3px);border-color:#cbdccf}
+.stat::before{height:3px;background:linear-gradient(90deg,#0e6945,#d7bd70)}
+.stat::after{right:14px;top:16px;width:48px;height:48px;background:rgba(16,112,72,.07)}
+.stat b{font-size:34px;color:#15583b;line-height:1.1;letter-spacing:-1px}
+.stat:nth-child(2) b{color:#277a9c}.stat:nth-child(3) b{color:#9a7b2d}.stat:nth-child(4) b{color:#7559a2}
+.bar{gap:9px}.bar input,.bar select,.f input,.f select{border:1px solid #dce5e8;border-radius:9px;padding:10px 12px;background:#fff;font-size:13px}
+.tw{border:1px solid #e5ecef;border-radius:11px}
+table{font-size:13px;background:#fff}th{background:#f0f5f2;color:#486456;padding:12px;font-size:10px;letter-spacing:.7px;border-bottom:1px solid #e1eae4}td{padding:11px 12px;border-bottom:1px solid #edf1f2;color:#41534a}tbody tr:nth-child(even) td,table tr:nth-child(even) td{background:#fbfcfc}tr:hover td{background:#f5f8f4!important}
+.tag{background:#f7f1dc;border:1px solid #e9dba9;color:#776021;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:600}
+.av{border:2px solid #e4d49e;box-shadow:none}
+.portal-hero{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:27px 29px;border-radius:16px;background:linear-gradient(112deg,#0a4631 0%,#126a47 66%,#1c8057 100%);color:#fff;box-shadow:0 10px 25px rgba(10,70,49,.14);margin:8px 0 17px}
+.portal-hero:after{content:"";position:absolute;width:260px;height:260px;right:-65px;top:-130px;border:1px solid rgba(245,225,163,.22);border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.025),0 0 0 58px rgba(255,255,255,.02)}
+.hero-copy{position:relative;z-index:1}.hero-kicker{font-size:9px;letter-spacing:2px;color:#e7d69d;font-weight:700;margin-bottom:9px}.hero-title{font-size:clamp(20px,2.5vw,28px);font-weight:700;letter-spacing:-.6px;line-height:1.25;margin-bottom:8px}.hero-desc{font-size:12px;color:#d1e4d9;max-width:560px;line-height:1.7}.hero-mark{position:relative;z-index:1;width:92px;height:92px;object-fit:cover;border-radius:50%;border:3px solid rgba(232,211,145,.9);box-shadow:0 0 0 7px rgba(255,255,255,.08);flex:none}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:21px 1px 11px}.section-head h3{margin:0;color:#244436;font-size:14px}.section-head p{margin:4px 0 0;color:#89968f;font-size:11px}
+.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}.quick-card{display:flex;align-items:center;gap:12px;padding:15px;background:#fff;border:1px solid #e7edf0;border-radius:12px;cursor:pointer;transition:.18s;text-align:left;color:#314c3f}.quick-card:hover{transform:translateY(-2px);border-color:#cbdccf;box-shadow:0 7px 18px rgba(28,55,44,.06)}.quick-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:#edf5ef;font-size:18px;flex:none}.quick-card b{display:block;font-size:12px}.quick-card small{display:block;color:#89968f;font-size:10px;margin-top:3px}
+.level-card h3{font-size:14px;color:#244436;margin:0 0 15px}.level-card table td:last-child{font-weight:700;color:#1b6242}
+.empty{color:#87968e}.portal-footer{padding:22px 2px 4px;color:#9aa69f;font-size:10px;text-align:center}
+#view{animation:rise .28s ease}.menu-btn{display:none}
+dialog{border-radius:16px} .dh{background:linear-gradient(110deg,#0a4631,#14764e);font-size:16px}.df{background:#f7f9f7}
+@media(max-width:1050px){main{padding:22px 24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){aside{width:268px;left:-285px;position:fixed;z-index:8;height:100dvh}aside.open{left:0}main{width:100%;padding:16px 14px}.menu-btn{display:inline-block}.top-left h1{font-size:21px}.top-right{width:100%;justify-content:space-between}.online-pill{display:none}.portal-hero{padding:22px 19px}.hero-mark{width:66px;height:66px}.quick-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{min-height:105px;padding:15px}.stat b{font-size:29px}.portal-footer{padding-bottom:16px}}
+@media(max-width:420px){.stats{grid-template-columns:1fr 1fr}.hero-mark{display:none}.portal-hero{padding:20px 17px}.bar input{min-width:130px}}
+
 </style>
 </head>
 <body>
 <aside id="side">
- <div class="brand"><div class="logo"></div><b>Tapak Suci<br>Pondok Modern Baitussalam</b><small>Simalungun</small></div>
+ <div class="brand"><div class="logo"></div><b>PORTAL ANGGOTA<br>TAPAK SUCI</b><small>PONDOK MODERN BAITUSSALAM</small><div class="brand-location">Simalungun · Sumatera Utara</div></div>
+ <div class="nav-caption">MENU UTAMA</div>
  <nav id="nav"></nav>
- <div class="side-foot"><button class="btn gold" id="loginBtn" style="width:100%"></button></div>
+ <div class="side-foot">
+  <div class="side-campus"><span class="side-campus-dot"></span><span>Database keanggotaan<br><b>Terintegrasi Supabase</b></span></div>
+  <button class="btn gold" id="loginBtn" style="width:100%"></button>
+ </div>
 </aside>
 <main>
- <header class="top"><div><button class="btn sm menu-btn" onclick="side.classList.toggle('open')">Menu</button> <h1 id="title" style="display:inline-block"></h1></div><div id="actions" class="bar" style="margin:0"></div></header>
+ <header class="top">
+  <div class="top-left"><button class="btn sm menu-btn" onclick="side.classList.toggle('open')">☰</button><div><div class="eyebrow">SISTEM INFORMASI KEANGGOTAAN</div><h1 id="title" style="display:inline-block">Beranda</h1></div></div>
+  <div class="top-right"><div class="online-pill"><span></span> Portal Database</div><div id="actions" class="bar" style="margin:0"></div></div>
+ </header>
  <div id="view"></div>
+ <footer class="portal-footer">© <span id="yearNow"></span> Portal Data Tapak Suci · Pondok Modern Baitussalam Simalungun</footer>
 </main>
 <dialog id="dlg"></dialog>
 
@@ -117,8 +183,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 
 /* ---------- Supabase ---------- */
 const SUPABASE_URL='https://qhffsdukxrqklwdxdmpp.supabase.co';      // contoh: https://abcd1234.supabase.co
-const SUPABASE_KEY='sb_publishable_k-BBZE3O5lbBi1iEjaQ64A_Ae0rtsYw';  // publishable key: boleh berada di frontend
-const ADMIN_EMAIL='baitussalamtapaksuci@gmail.com'; // harus sama dengan email pada SQL setup-supabase.sql
+const SUPABASE_KEY='sb_publishable_k-BBZE3O5lbBi1iEjaQ64A_Ae0rtsYw';  // kunci "anon public" (aman dipublikasikan)
 let sb=null;
 try{if(/^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL)&&!/GANTI/.test(SUPABASE_KEY)&&typeof supabase!=='undefined')sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){console.error(e)}
 const fromRow=d=>({id:d.id,nama:d.nama,jk:d.jk||'Laki-laki',tahun:d.tahun??'',tingkat:d.tingkat,kta:d.kta||'',alamat:d.alamat||'',kontak:d.kontak||'',foto:d.foto||'',ktaImg:d.kta_img||'',keg:d.keg||[]});
@@ -145,22 +210,20 @@ function nav(){
 }
 function go(p){page=p;side.classList.remove('open');nav();render();if(location.hash!=='#'+p)location.hash=p;window.scrollTo(0,0)}
 $('loginBtn').onclick=async()=>{
- if(!sb)return alert('Aplikasi belum tersambung ke Supabase. Periksa konfigurasi Supabase.');
+ if(!sb)return alert('Aplikasi belum tersambung ke Supabase. Isi SUPABASE_URL dan SUPABASE_KEY di index.html.');
  if(admin){await sb.auth.signOut();return}
  $('dlg').innerHTML=`<div class="dh">Masuk admin</div><div class="db"><div class="f"><label class="w">Email<input id="le" type="email" autocomplete="username"></label><label class="w">Kata sandi<input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></label></div></div><div class="df"><button class="btn red" onclick="dlg.close()">Batal</button><button class="btn" onclick="doLogin()">Masuk</button></div>`;
  $('dlg').showModal();
 };
 async function doLogin(){
- const email=$('le').value.trim().toLowerCase();
- if(email!==ADMIN_EMAIL.toLowerCase())return alert('Email ini tidak terdaftar sebagai admin aplikasi.');
- const {error}=await sb.auth.signInWithPassword({email,password:$('lp').value});
+ const {error}=await sb.auth.signInWithPassword({email:$('le').value.trim(),password:$('lp').value});
  if(error)return alert('Gagal masuk: '+error.message);
  dlg.close();
 }
-if(sb)sb.auth.onAuthStateChange((_e,ses)=>{admin=!!ses&&String(ses.user?.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase();if(ses&&!admin)sb.auth.signOut();nav();render()});
+if(sb)sb.auth.onAuthStateChange((_e,ses)=>{admin=!!ses;nav();render()});
 function render(){
  render0();
- if(!sb)$('view').insertAdjacentHTML('afterbegin','<div class="card" style="border-color:#a32a2a;margin-bottom:14px"><b>Aplikasi belum tersambung ke Supabase.</b> Periksa SUPABASE_URL dan SUPABASE_KEY di index.html.</div>');
+ if(!sb)$('view').insertAdjacentHTML('afterbegin','<div class="card" style="border-color:#a32a2a;margin-bottom:14px"><b>Aplikasi belum tersambung ke Supabase.</b> Isi SUPABASE_URL dan SUPABASE_KEY di index.html, lalu upload ulang ke GitHub.</div>');
 }
 function render0(){
  const a=$('actions');a.innerHTML='';
@@ -173,10 +236,25 @@ function render0(){
 function dash(){
  $('title').textContent='Beranda';
  const tot=db.siswa.length+db.kader.length+db.pendekar.length;
- $('view').innerHTML=`<div class="stats">
- <div class="stat"><b>${tot}</b>Total anggota</div>
- ${['siswa','kader','pendekar'].map(t=>`<div class="stat" style="cursor:pointer" onclick="go('${t}')"><b>${db[t].length}</b>${NAMA[t]}</div>`).join('')}</div>
- <div class="card"><h3 style="margin-top:0">Sebaran tingkatan</h3><div class="tw"><table><tr><th>Jenjang</th><th>Tingkatan</th><th>Jumlah</th></tr>
+ $('view').innerHTML=`
+ <section class="portal-hero">
+  <div class="hero-copy"><div class="hero-kicker">PONDOK MODERN BAITUSSALAM · SIMALUNGUN</div>
+   <div class="hero-title">Selamat Datang di Portal<br>Data Anggota Tapak Suci</div>
+   <div class="hero-desc">Pusat informasi dan pengelolaan data siswa, kader, serta pendekar Tapak Suci secara terintegrasi. Data tersimpan dalam satu sistem dan dapat diakses sesuai hak pengguna.</div>
+  </div><img class="hero-mark" src="logo.jpg" alt="Logo Tapak Suci">
+ </section>
+ <div class="section-head"><div><h3>Ringkasan Keanggotaan</h3><p>Ikhtisar jumlah data yang tercatat dalam sistem</p></div><span class="tag">DATA ANGGOTA</span></div>
+ <div class="stats">
+  <div class="stat"><b>${tot}</b><span>Total anggota terdaftar</span></div>
+  ${['siswa','kader','pendekar'].map(t=>`<div class="stat" style="cursor:pointer" onclick="go('${t}')"><b>${db[t].length}</b><span>${NAMA[t]} <small style="display:block;font-size:10px;font-weight:500;color:#96a39c;margin-top:4px">Lihat data →</small></span></div>`).join('')}
+ </div>
+ <div class="section-head"><div><h3>Akses Cepat</h3><p>Pilih kategori data yang ingin dibuka</p></div></div>
+ <div class="quick-grid">
+  <button class="quick-card" onclick="go('siswa')"><span class="quick-icon">🎓</span><span><b>Data Siswa</b><small>Informasi siswa dan tingkatan</small></span></button>
+  <button class="quick-card" onclick="go('kader')"><span class="quick-icon">🛡️</span><span><b>Data Kader</b><small>Informasi kader dan jenjang</small></span></button>
+  <button class="quick-card" onclick="go('pendekar')"><span class="quick-icon">🥋</span><span><b>Data Pendekar</b><small>Informasi pendekar dan KTA</small></span></button>
+ </div>
+ <div class="card level-card"><h3>Distribusi Tingkatan</h3><div class="tw"><table><tr><th>Jenjang</th><th>Tingkatan</th><th>Jumlah anggota</th></tr>
  ${['siswa','kader','pendekar'].map(t=>LV[t].map(l=>`<tr><td>${NAMA[t]}</td><td>${esc(l)}</td><td>${db[t].filter(x=>x.tingkat===l).length}</td></tr>`).join('')).join('')}</table></div></div>`;
 }
 
@@ -300,6 +378,7 @@ const _render=render;render=function(){_render();backBtn()};
 window.addEventListener('hashchange',()=>{const p=location.hash.slice(1);if(PAGES.includes(p)&&p!==page){page=p;nav();render()}});
 {const h=location.hash.slice(1);if(PAGES.includes(h))page=h}
 
+if($('yearNow'))$('yearNow').textContent=new Date().getFullYear();
 (async()=>{nav();render();await load();render()})();
 </script>
 </body>
