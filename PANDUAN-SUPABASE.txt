@@ -1,0 +1,49 @@
+PANDUAN MENGHUBUNGKAN DATABASE TAPAK SUCI KE SUPABASE
+
+A. SIAPKAN PROYEK SUPABASE
+1. Buka https://supabase.com/dashboard lalu masuk/daftar.
+2. Buat project baru (atau gunakan project yang memang sudah dipakai aplikasi ini).
+3. Simpan Database Password dengan aman.
+4. Buka Project Settings > API (atau Connect/API Keys pada tampilan dashboard Anda).
+5. Catat Project URL dan publishable key. Jangan pernah memakai service_role/secret key di HTML atau GitHub.
+
+B. BUAT TABEL, KEAMANAN, DAN STORAGE
+1. Buka SQL Editor di dashboard Supabase.
+2. Buka file setup-supabase.sql.
+3. Ganti SEMUA teks baitussalamtapaksuci@gmail.com dengan email admin yang akan digunakan, persis sama.
+4. Jalankan seluruh SQL.
+   SQL membuat tabel public.anggota, kebijakan RLS, dan bucket Storage bernama media.
+
+C. BUAT AKUN LOGIN ADMIN
+1. Supabase Dashboard > Authentication > Users.
+2. Pilih Add user / Create new user.
+3. Masukkan email admin dan password yang kuat.
+4. Jika dashboard meminta verifikasi email, verifikasi/konfirmasi akun admin.
+5. Tidak perlu mengaktifkan pendaftaran publik. Buat akun admin dari dashboard saja.
+
+D. SAMAKAN EMAIL ADMIN DI APLIKASI
+1. Buka index.html dengan editor teks.
+2. Cari baris ADMIN_EMAIL.
+3. Ganti baitussalamtapaksuci@gmail.com dengan email admin yang sama, yaitu 'baitussalamtapaksuci@gmail.com'.
+4. Pastikan SUPABASE_URL dan SUPABASE_KEY sesuai dengan Project URL dan publishable key proyek Supabase yang sama.
+5. Simpan.
+
+E. UPLOAD KE GITHUB
+1. Upload/replace index.html dan logo.jpg ke repository GitHub.
+2. Sertakan setup-supabase.sql dan panduan ini sebagai dokumentasi.
+3. Jika memakai GitHub Pages, buka Settings > Pages dan pastikan sumber deployment benar.
+4. Buka alamat website, refresh penuh, lalu klik Masuk sebagai admin.
+
+F. TES
+1. Login menggunakan email dan password admin.
+2. Tambahkan satu data uji; pastikan muncul setelah halaman direfresh.
+3. Unggah foto; pastikan foto tampil setelah direfresh.
+4. Coba login dengan email lain: aplikasi seharusnya menolak akses admin.
+5. Coba ubah/hapus data tanpa login: database seharusnya menolak operasi tersebut.
+
+CATATAN KEAMANAN
+- Publishable key memang digunakan di browser; keamanan data harus ditegakkan oleh RLS di database.
+- Jangan pernah menaruh service_role key atau secret key di index.html, GitHub, atau browser.
+- Kebijakan SQL di file ini membuat data anggota dapat dibaca publik (sesuai perilaku aplikasi saat ini), tetapi hanya email admin yang ditentukan yang dapat menulis/mengubah/menghapus.
+- Jika data anggota harus rahasia dan hanya admin yang boleh melihatnya, kebijakan SELECT publik perlu diubah dan tampilan aplikasi juga perlu disesuaikan.
+- File ini tidak menghapus data yang sudah ada. Jika tabel anggota sudah ada dengan struktur berbeda, periksa skema sebelum menjalankan migrasi.

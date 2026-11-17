@@ -117,7 +117,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 
 /* ---------- Supabase ---------- */
 const SUPABASE_URL='https://qhffsdukxrqklwdxdmpp.supabase.co';      // contoh: https://abcd1234.supabase.co
-const SUPABASE_KEY='sb_publishable_k-BBZE3O5lbBi1iEjaQ64A_Ae0rtsYw';  // kunci "anon public" (aman dipublikasikan)
+const SUPABASE_KEY='sb_publishable_k-BBZE3O5lbBi1iEjaQ64A_Ae0rtsYw';  // publishable key: boleh berada di frontend
+const ADMIN_EMAIL='baitussalamtapaksuci@gmail.com'; // harus sama dengan email pada SQL setup-supabase.sql
 let sb=null;
 try{if(/^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL)&&!/GANTI/.test(SUPABASE_KEY)&&typeof supabase!=='undefined')sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){console.error(e)}
 const fromRow=d=>({id:d.id,nama:d.nama,jk:d.jk||'Laki-laki',tahun:d.tahun??'',tingkat:d.tingkat,kta:d.kta||'',alamat:d.alamat||'',kontak:d.kontak||'',foto:d.foto||'',ktaImg:d.kta_img||'',keg:d.keg||[]});
@@ -144,20 +145,22 @@ function nav(){
 }
 function go(p){page=p;side.classList.remove('open');nav();render();if(location.hash!=='#'+p)location.hash=p;window.scrollTo(0,0)}
 $('loginBtn').onclick=async()=>{
- if(!sb)return alert('Aplikasi belum tersambung ke Supabase. Isi SUPABASE_URL dan SUPABASE_KEY di index.html.');
+ if(!sb)return alert('Aplikasi belum tersambung ke Supabase. Periksa konfigurasi Supabase.');
  if(admin){await sb.auth.signOut();return}
  $('dlg').innerHTML=`<div class="dh">Masuk admin</div><div class="db"><div class="f"><label class="w">Email<input id="le" type="email" autocomplete="username"></label><label class="w">Kata sandi<input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></label></div></div><div class="df"><button class="btn red" onclick="dlg.close()">Batal</button><button class="btn" onclick="doLogin()">Masuk</button></div>`;
  $('dlg').showModal();
 };
 async function doLogin(){
- const {error}=await sb.auth.signInWithPassword({email:$('le').value.trim(),password:$('lp').value});
+ const email=$('le').value.trim().toLowerCase();
+ if(email!==ADMIN_EMAIL.toLowerCase())return alert('Email ini tidak terdaftar sebagai admin aplikasi.');
+ const {error}=await sb.auth.signInWithPassword({email,password:$('lp').value});
  if(error)return alert('Gagal masuk: '+error.message);
  dlg.close();
 }
-if(sb)sb.auth.onAuthStateChange((_e,ses)=>{admin=!!ses;nav();render()});
+if(sb)sb.auth.onAuthStateChange((_e,ses)=>{admin=!!ses&&String(ses.user?.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase();if(ses&&!admin)sb.auth.signOut();nav();render()});
 function render(){
  render0();
- if(!sb)$('view').insertAdjacentHTML('afterbegin','<div class="card" style="border-color:#a32a2a;margin-bottom:14px"><b>Aplikasi belum tersambung ke Supabase.</b> Isi SUPABASE_URL dan SUPABASE_KEY di index.html, lalu upload ulang ke GitHub.</div>');
+ if(!sb)$('view').insertAdjacentHTML('afterbegin','<div class="card" style="border-color:#a32a2a;margin-bottom:14px"><b>Aplikasi belum tersambung ke Supabase.</b> Periksa SUPABASE_URL dan SUPABASE_KEY di index.html.</div>');
 }
 function render0(){
  const a=$('actions');a.innerHTML='';
